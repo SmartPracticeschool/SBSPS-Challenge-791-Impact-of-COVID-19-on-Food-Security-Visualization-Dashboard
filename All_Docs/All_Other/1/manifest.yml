@@ -1,0 +1,15 @@
+---
+applications:
+- instances: 1
+  timeout: 180
+  name: noderedowsup
+  buildpack: sdk-for-nodejs
+  command: npm start
+  disk_quota: 1G
+  memory: 128MB
+  domain: eu-gb.mybluemix.net
+  host: node-red-owsup
+  services:
+    - node-red-owsup-cloudant-1590483831789-25258
+  env:
+    OPTIMIZE_MEMORY: true
