@@ -1,5 +1,10 @@
 # SBSPS Challenge 791 Impact of COVID 19 on Food Security Visualization Dashboard
 
+Team Name: IDCAN
+Team Member: Ketki Nirantar | Rishabh Karmakar
+Application ID: SPS_CH_APL_20200001472
+Project ID: SPS_PRO_167
+
 ## Solution Description:
 
 Right now, amid this COVID crisis, we live in times of food insecurity. We live in times where we are uncertain if we are going to get our food supplies or even if we have grocery stores open in our area. The suppliers are also uncertain as to which products they should bring and how much as too much inventory in the warehouse means more risk of wastage, and not enough could lead to out-of-stocks - and push customers to seek solutions from your competitors. This creates a huge supply-demand gap and more enormous consumer-supplier gap.
