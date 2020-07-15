@@ -1,9 +1,9 @@
 # SBSPS Challenge 791 Impact of COVID 19 on Food Security Visualization Dashboard
 
-Team Name: IDCAN
-Team Member: Ketki Nirantar | Rishabh Karmakar
-Application ID: SPS_CH_APL_20200001472
-Project ID: SPS_PRO_167
+* Team Name: IDCAN 
+* Team Member: Ketki Nirantar | Rishabh Karmakar
+* Application ID: SPS_CH_APL_20200001472
+* Project ID: SPS_PRO_167
 
 ## Solution Description:
 
