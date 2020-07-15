@@ -1,0 +1,735 @@
+[
+    {
+        "id": "1cd40437.661a4c",
+        "type": "tab",
+        "label": "Voice Enabled COVID Chatbot",
+        "disabled": false,
+        "info": ""
+    },
+    {
+        "id": "9ec4f119.33507",
+        "type": "debug",
+        "z": "1cd40437.661a4c",
+        "name": "",
+        "active": true,
+        "console": "false",
+        "complete": "false",
+        "x": 1010,
+        "y": 320,
+        "wires": []
+    },
+    {
+        "id": "3031c325.ab15fc",
+        "type": "switch",
+        "z": "1cd40437.661a4c",
+        "name": "Intents",
+        "property": "payload.intents[0].intent",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "eq",
+                "v": "How_many_cases",
+                "vt": "str"
+            },
+            {
+                "t": "else"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 2,
+        "x": 250,
+        "y": 320,
+        "wires": [
+            [
+                "74045683.266ef8"
+            ],
+            [
+                "a74588b6.93fac"
+            ]
+        ]
+    },
+    {
+        "id": "249aa0fb.ad77e8",
+        "type": "comment",
+        "z": "1cd40437.661a4c",
+        "name": "Reply to the user",
+        "info": "",
+        "x": 1220,
+        "y": 340,
+        "wires": []
+    },
+    {
+        "id": "92adf75b.696728",
+        "type": "change",
+        "z": "1cd40437.661a4c",
+        "name": "Pass the recorded transcript to Conversation",
+        "rules": [
+            {
+                "t": "set",
+                "p": "payload",
+                "pt": "msg",
+                "to": "transcription",
+                "tot": "msg"
+            },
+            {
+                "t": "set",
+                "p": "chatstart",
+                "pt": "flow",
+                "to": "true",
+                "tot": "bool"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 610,
+        "y": 100,
+        "wires": [
+            [
+                "9003f234.27636",
+                "125113f7.c0b6b4"
+            ]
+        ]
+    },
+    {
+        "id": "e6c19df8.cf92e8",
+        "type": "watson-text-to-speech",
+        "z": "1cd40437.661a4c",
+        "name": "",
+        "lang": "en-US",
+        "langhidden": "en-US",
+        "langcustom": "NoCustomisationSetting",
+        "langcustomhidden": "",
+        "voice": "en-US_MichaelVoice",
+        "voicehidden": "en-US_MichaelVoice",
+        "format": "audio/wav",
+        "password": "",
+        "apikey": "",
+        "payload-response": true,
+        "service-endpoint": "",
+        "x": 1020,
+        "y": 380,
+        "wires": [
+            [
+                "ea674ec7.1be39"
+            ]
+        ]
+    },
+    {
+        "id": "87ec5201.e363a8",
+        "type": "debug",
+        "z": "1cd40437.661a4c",
+        "name": "",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "complete": "transcription",
+        "x": 530,
+        "y": 60,
+        "wires": []
+    },
+    {
+        "id": "a74588b6.93fac",
+        "type": "function",
+        "z": "1cd40437.661a4c",
+        "name": "Watson Conversation Reply",
+        "func": "function createTextLinks(text) {\n\n  return (text || \"\").replace(\n    /([^\\S]|^)(((https?\\:\\/\\/)|(www\\.))(\\S+))/gi,\n    function(match, space, url){\n      var hyperlink = url;\n      if (!hyperlink.match('^https?:\\/\\/')) {\n        hyperlink = 'http://' + hyperlink;\n      }\n      return space + '<a href=\"' + hyperlink + '\">' + url + '</a>';\n    }\n  );\n}\n\nvar response = \"\"\n\nfor(i=0;i<msg.payload.output.generic.length;i++) {\n  response = response + msg.payload.output.generic[i].text ;\n}\n\nresponse = createTextLinks(response);\n\n// The news reports will have \\n, replace with breaks\nmsg.payload = response.replace(/(?:\\r\\n|\\r|\\n)/g, '<br />');\n\n// The news reports will have http: links. Make them \n\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 580,
+        "y": 320,
+        "wires": [
+            [
+                "9ec4f119.33507",
+                "9003f234.27636",
+                "e6c19df8.cf92e8"
+            ]
+        ]
+    },
+    {
+        "id": "125113f7.c0b6b4",
+        "type": "watson-conversation-v1",
+        "z": "1cd40437.661a4c",
+        "name": "",
+        "workspaceid": "",
+        "multiuser": false,
+        "context": true,
+        "empty-payload": false,
+        "service-endpoint": "",
+        "timeout": "",
+        "optout-learning": false,
+        "x": 920,
+        "y": 100,
+        "wires": [
+            [
+                "297b7120.f080c6",
+                "2026b23f.b539fe"
+            ]
+        ]
+    },
+    {
+        "id": "297b7120.f080c6",
+        "type": "debug",
+        "z": "1cd40437.661a4c",
+        "name": "",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "x": 1150,
+        "y": 100,
+        "wires": []
+    },
+    {
+        "id": "1a0941d7.d9b85e",
+        "type": "debug",
+        "z": "1cd40437.661a4c",
+        "name": "",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "x": 1010,
+        "y": 480,
+        "wires": []
+    },
+    {
+        "id": "9f8392e8.8350d",
+        "type": "watson-speech-to-text",
+        "z": "1cd40437.661a4c",
+        "name": "",
+        "alternatives": 1,
+        "speakerlabels": true,
+        "smartformatting": false,
+        "lang": "en-US",
+        "langhidden": "en-US",
+        "langcustom": "NoCustomisationSetting",
+        "langcustomhidden": "",
+        "custom-weight": "0.5",
+        "band": "BroadbandModel",
+        "bandhidden": "BroadbandModel",
+        "keywords": "",
+        "keywords-threshold": "0.5",
+        "word-confidence": false,
+        "password": "",
+        "apikey": "",
+        "payload-response": false,
+        "streaming-mode": false,
+        "streaming-mute": true,
+        "auto-connect": false,
+        "discard-listening": false,
+        "disable-precheck": false,
+        "service-endpoint": "",
+        "x": 280,
+        "y": 100,
+        "wires": [
+            [
+                "87ec5201.e363a8",
+                "92adf75b.696728"
+            ]
+        ]
+    },
+    {
+        "id": "d981677a.def458",
+        "type": "ui_template",
+        "z": "1cd40437.661a4c",
+        "group": "8be8cbae.55a828",
+        "name": "Chat History",
+        "order": 1,
+        "width": 10,
+        "height": 15,
+        "format": "<div id=\"{{'my_'+$id}}\" style=\"{{'color:'+theme.base_color}}\"></div>\n<script>\n(function(scope) {\n  scope.$watch('msg', function(msg) {\n    if (msg) {\n      // Render the chatbot table when msg arrives\n      $(\"#my_\"+scope.$id).html(msg.payload);\n      // scroll to Bottom\n      var elmnt = document.getElementById(\"chatbot\");\n      elmnt.scrollIntoView(false);\n    }\n  });\n})(scope);\n</script>\n",
+        "storeOutMessages": true,
+        "fwdInMessages": true,
+        "templateScope": "local",
+        "x": 1150,
+        "y": 240,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "9003f234.27636",
+        "type": "function",
+        "z": "1cd40437.661a4c",
+        "name": "Build Chat table",
+        "func": "var chathistory = flow.get(\"history\")||[];\nvar chatstart = flow.get(\"chatstart\");\nvar who;\n\nif( typeof(chatstart) == 'undefined' ) { chatstart = true ; }\nif(chatstart===true) {\n    who = \"Q\";\n} else {\n    who = \"A\";\n}\n\nvar newchatentry = {\"who\":\"\",\"text\":\"\"};\nif( chathistory.length === 0 ) {\n    // First chat, init the table\n    newchatentry = {\"who\":\"A\",\"text\":\"Hello, I’m the COVID Crisis Communication Bot ready to answer your questions about COVID-19. How can I help you?\"};\n\n    // Add the question, if its not a Clear Chat button press\n    if( msg.payload.length ) { \n        chathistory.push(newchatentry);\n        newchatentry = {\"who\":\"Q\",\"text\":msg.payload}; \n    }\n} else {\n    newchatentry = {\"who\":who,\"text\":msg.payload};\n}\nchathistory.push(newchatentry);\n\nmsg.payload=\"<style>\";\nmsg.payload=msg.payload+\"table { width: 488px; margin-top: 10px; }\";\nmsg.payload=msg.payload+\"tr:nth-child(even){background-color: #f2f2f2;}\";\nmsg.payload=msg.payload+\"th, td { padding: 8px; text-align: left; border-bottom: 1px solid #ddd; width: 10%;}\";\nmsg.payload=msg.payload+\"</style>\";\n\nmsg.payload=msg.payload+\"<table id=\\\"chatbot\\\" span=100%><tr><th>Chat History</th></tr>\";\nfor( i = 0; i < chathistory.length; i++ ) {\n    if( chathistory[i].who == \"Q\" ) {\n        msg.payload = msg.payload + \"<tr><td><p style=\\\"text-align:right;\\\">\"+chathistory[i].text+\"</p></td></tr>\" ;\n    } else {\n        msg.payload = msg.payload + \"<tr><td><p style=\\\"text-align:left;background-color:#f2f2f2;\\\">\" +chathistory[i].text+\"</p></td></tr>\" ;\n    }\n}\n\nmsg.payload = msg.payload + \"</table>\";\nflow.set(\"chatstart\",false);\nflow.set(\"history\",chathistory);\nreturn msg;\n",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 940,
+        "y": 220,
+        "wires": [
+            [
+                "d981677a.def458",
+                "f850c94e.17dca"
+            ]
+        ]
+    },
+    {
+        "id": "f850c94e.17dca",
+        "type": "debug",
+        "z": "1cd40437.661a4c",
+        "name": "",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "x": 1150,
+        "y": 200,
+        "wires": []
+    },
+    {
+        "id": "3ca202cd.108926",
+        "type": "inject",
+        "z": "1cd40437.661a4c",
+        "name": "",
+        "topic": "Clear Chat",
+        "payload": "true",
+        "payloadType": "bool",
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "x": 120,
+        "y": 240,
+        "wires": [
+            [
+                "1ff34610.6dbcda"
+            ]
+        ]
+    },
+    {
+        "id": "1ff34610.6dbcda",
+        "type": "change",
+        "z": "1cd40437.661a4c",
+        "name": "delete history",
+        "rules": [
+            {
+                "t": "delete",
+                "p": "history",
+                "pt": "flow"
+            },
+            {
+                "t": "set",
+                "p": "chatstart",
+                "pt": "flow",
+                "to": "false",
+                "tot": "bool"
+            },
+            {
+                "t": "set",
+                "p": "payload",
+                "pt": "msg",
+                "to": "",
+                "tot": "str"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 310,
+        "y": 220,
+        "wires": [
+            [
+                "9003f234.27636"
+            ]
+        ]
+    },
+    {
+        "id": "382de802.35809",
+        "type": "ui_button",
+        "z": "1cd40437.661a4c",
+        "name": "",
+        "group": "98106f1f.66b66",
+        "order": 6,
+        "width": 6,
+        "height": 1,
+        "passthru": false,
+        "label": "Clear Chat",
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "",
+        "icon": "",
+        "payload": "",
+        "payloadType": "str",
+        "topic": "",
+        "x": 130,
+        "y": 200,
+        "wires": [
+            [
+                "1ff34610.6dbcda"
+            ]
+        ]
+    },
+    {
+        "id": "2026b23f.b539fe",
+        "type": "function",
+        "z": "1cd40437.661a4c",
+        "name": "",
+        "func": "if( typeof msg.payload.intents != 'undefined') {\n    if( msg.payload.intents.length > 0 ) {\n        if( typeof msg.payload.intents[0].intent!= 'undefined') {\n            return [msg, null];\n        }\n    }\n}\nmsg.payload = \"Sorry, the chat bot did not understand the question.\";\nreturn [null,msg];",
+        "outputs": 2,
+        "noerr": 0,
+        "x": 110,
+        "y": 360,
+        "wires": [
+            [
+                "3031c325.ab15fc"
+            ],
+            [
+                "e6c19df8.cf92e8"
+            ]
+        ]
+    },
+    {
+        "id": "e800caab.b57ba8",
+        "type": "ui_gauge",
+        "z": "1cd40437.661a4c",
+        "name": "",
+        "group": "98106f1f.66b66",
+        "order": 2,
+        "width": 3,
+        "height": 3,
+        "gtype": "gage",
+        "title": "Total Confirmed Cases",
+        "label": "",
+        "format": "{{value}}",
+        "min": 0,
+        "max": "4000000",
+        "colors": [
+            "#ca3838",
+            "#ca3838",
+            "#ca3838"
+        ],
+        "seg1": "",
+        "seg2": "",
+        "x": 1040,
+        "y": 520,
+        "wires": []
+    },
+    {
+        "id": "679c80ef.723f48",
+        "type": "inject",
+        "z": "1cd40437.661a4c",
+        "name": "Hourly updates",
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "repeat": "",
+        "crontab": "0 0 * * *",
+        "once": false,
+        "onceDelay": 0.1,
+        "x": 240,
+        "y": 660,
+        "wires": [
+            [
+                "661427e3.7ed098"
+            ]
+        ]
+    },
+    {
+        "id": "d98b3562.5466e",
+        "type": "ui_gauge",
+        "z": "1cd40437.661a4c",
+        "name": "",
+        "group": "98106f1f.66b66",
+        "order": 4,
+        "width": 3,
+        "height": 3,
+        "gtype": "gage",
+        "title": "Total Deaths",
+        "label": "",
+        "format": "{{value}}",
+        "min": 0,
+        "max": "500000",
+        "colors": [
+            "#c13421",
+            "#d40015",
+            "#ca3838"
+        ],
+        "seg1": "",
+        "seg2": "",
+        "x": 1010,
+        "y": 580,
+        "wires": []
+    },
+    {
+        "id": "e67fb1c2.045428",
+        "type": "ui_gauge",
+        "z": "1cd40437.661a4c",
+        "name": "",
+        "group": "98106f1f.66b66",
+        "order": 1,
+        "width": 3,
+        "height": 3,
+        "gtype": "gage",
+        "title": "Total Countries",
+        "label": "",
+        "format": "{{value}}",
+        "min": 0,
+        "max": "250",
+        "colors": [
+            "#ee7b00",
+            "#e43135",
+            "#f23030"
+        ],
+        "seg1": "",
+        "seg2": "",
+        "x": 1020,
+        "y": 640,
+        "wires": []
+    },
+    {
+        "id": "7f41c5ff.ccef54",
+        "type": "trigger",
+        "z": "1cd40437.661a4c",
+        "op1": "1",
+        "op2": "0",
+        "op1type": "str",
+        "op2type": "str",
+        "duration": "1",
+        "extend": false,
+        "units": "s",
+        "reset": "",
+        "bytopic": "all",
+        "name": "",
+        "x": 260,
+        "y": 580,
+        "wires": [
+            [
+                "661427e3.7ed098"
+            ]
+        ]
+    },
+    {
+        "id": "b74bcc55.e928d8",
+        "type": "ui_ui_control",
+        "z": "1cd40437.661a4c",
+        "name": "",
+        "events": "change",
+        "x": 100,
+        "y": 580,
+        "wires": [
+            [
+                "7f41c5ff.ccef54"
+            ]
+        ]
+    },
+    {
+        "id": "387585b1.85d72a",
+        "type": "comment",
+        "z": "1cd40437.661a4c",
+        "name": "Refresh the dashboard",
+        "info": "",
+        "x": 220,
+        "y": 620,
+        "wires": []
+    },
+    {
+        "id": "661427e3.7ed098",
+        "type": "twc-covid19-country-report",
+        "z": "1cd40437.661a4c",
+        "name": "",
+        "apikey": "",
+        "x": 490,
+        "y": 620,
+        "wires": [
+            [
+                "e063447c.df5688",
+                "8d9ccfad.4f484",
+                "b4aea8d7.ef4dd",
+                "785f2511.b15824"
+            ]
+        ]
+    },
+    {
+        "id": "e063447c.df5688",
+        "type": "function",
+        "z": "1cd40437.661a4c",
+        "name": "Total Confirmed Cases",
+        "func": "let totalConfirmedCase = 0;\n\nmsg.payload.covid19.confirmed.map(function(line){\n    totalConfirmedCase += line;\n});\n\nmsg.payload = totalConfirmedCase;\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 780,
+        "y": 520,
+        "wires": [
+            [
+                "e800caab.b57ba8",
+                "1a0941d7.d9b85e"
+            ]
+        ]
+    },
+    {
+        "id": "8d9ccfad.4f484",
+        "type": "function",
+        "z": "1cd40437.661a4c",
+        "name": "Total Fatalities",
+        "func": "let totalFatalities = 0;\n\nmsg.payload.covid19.deaths.map(function(line){\n    totalFatalities += line;\n});\n\nmsg.payload = totalFatalities;\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 760,
+        "y": 580,
+        "wires": [
+            [
+                "d98b3562.5466e"
+            ]
+        ]
+    },
+    {
+        "id": "785f2511.b15824",
+        "type": "function",
+        "z": "1cd40437.661a4c",
+        "name": "Total Confirmed Countries",
+        "func": "let totalCtryConfirmed = 0;\n\nmsg.payload.covid19.confirmed.map(function(line){\n    if( line !== null ) {\n      totalCtryConfirmed += 1;\n    }\n});\n\nmsg.payload = totalCtryConfirmed;\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 790,
+        "y": 640,
+        "wires": [
+            [
+                "e67fb1c2.045428"
+            ]
+        ]
+    },
+    {
+        "id": "b4aea8d7.ef4dd",
+        "type": "debug",
+        "z": "1cd40437.661a4c",
+        "name": "",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "x": 750,
+        "y": 700,
+        "wires": []
+    },
+    {
+        "id": "c762a0d3.34e5",
+        "type": "ui_microphone",
+        "z": "1cd40437.661a4c",
+        "group": "98106f1f.66b66",
+        "order": 5,
+        "width": 0,
+        "height": 0,
+        "name": "",
+        "maxLength": 3,
+        "timeslice": 0,
+        "x": 90,
+        "y": 100,
+        "wires": [
+            [
+                "9f8392e8.8350d"
+            ]
+        ]
+    },
+    {
+        "id": "74045683.266ef8",
+        "type": "twc-covid19-country-report",
+        "z": "1cd40437.661a4c",
+        "name": "",
+        "apikey": "",
+        "x": 490,
+        "y": 420,
+        "wires": [
+            [
+                "c3f83642.e0e398"
+            ]
+        ]
+    },
+    {
+        "id": "c3f83642.e0e398",
+        "type": "function",
+        "z": "1cd40437.661a4c",
+        "name": "Total Confirmed Cases",
+        "func": "let totalConfirmedCase = 0;\n\nmsg.payload.covid19.confirmed.map(function(line){\n    totalConfirmedCase += line;\n});\n\nmsg.payload = \"Worldwide, there have been \"+totalConfirmedCase+\" total confirmed cases of COVID-19\"\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 780,
+        "y": 420,
+        "wires": [
+            [
+                "e6c19df8.cf92e8",
+                "88370f44.5f2dd",
+                "9003f234.27636"
+            ]
+        ]
+    },
+    {
+        "id": "9b22313d.a3c54",
+        "type": "comment",
+        "z": "1cd40437.661a4c",
+        "name": "node-red-contrib-twc-covid19-tracker",
+        "info": "",
+        "x": 500,
+        "y": 580,
+        "wires": []
+    },
+    {
+        "id": "88370f44.5f2dd",
+        "type": "debug",
+        "z": "1cd40437.661a4c",
+        "name": "",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "x": 1010,
+        "y": 420,
+        "wires": []
+    },
+    {
+        "id": "ea674ec7.1be39",
+        "type": "ui_audio",
+        "z": "1cd40437.661a4c",
+        "name": "",
+        "group": "98106f1f.66b66",
+        "voice": "",
+        "always": "",
+        "x": 1200,
+        "y": 380,
+        "wires": []
+    },
+    {
+        "id": "8be8cbae.55a828",
+        "type": "ui_group",
+        "z": "",
+        "name": "Chat",
+        "tab": "3bfcc361.e45164",
+        "order": 2,
+        "disp": true,
+        "width": "10",
+        "collapse": false
+    },
+    {
+        "id": "98106f1f.66b66",
+        "type": "ui_group",
+        "z": "",
+        "name": "Record",
+        "tab": "3bfcc361.e45164",
+        "order": 1,
+        "disp": true,
+        "width": "6",
+        "collapse": false
+    },
+    {
+        "id": "3bfcc361.e45164",
+        "type": "ui_tab",
+        "z": "",
+        "name": "COVID Voice Chatbot",
+        "icon": "dashboard",
+        "order": 1,
+        "disabled": false,
+        "hidden": false
+    }
+]
